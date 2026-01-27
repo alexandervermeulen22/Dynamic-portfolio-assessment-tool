@@ -1,26 +1,17 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
-from datetime import datetime, timedelta
-import sys
-import os
-
 # Ensure the root directory is in the path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-# --- DEBUGGING START ---
-import streamlit as st
-st.write("Current Directory:", os.getcwd())
-st.write("Files in root:", os.listdir('.'))
-if os.path.exists('utils'):
-    st.write("Files in utils:", os.listdir('utils'))
-else:
-    st.write("WARNING: 'utils' folder NOT FOUND!")
-# --- DEBUGGING END ---
-
-import utils.data_loader as dl
-import utils.metrics as mt
-import utils.visualizations as vz
+# Robust Import Strategy: Try importing from 'utils' first (local structure),
+# then fall back to root imports (server structure appears flat)
+try:
+    import utils.data_loader as dl
+    import utils.metrics as mt
+    import utils.visualizations as vz
+except ImportError:
+    # If utils folder doesn't exist or isn't a package, try direct imports
+    import data_loader as dl
+    import metrics as mt
+    import visualizations as vz
 
 # Page Config
 st.set_page_config(
