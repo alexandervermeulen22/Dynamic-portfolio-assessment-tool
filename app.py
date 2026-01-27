@@ -8,6 +8,16 @@ import os
 # Ensure the root directory is in the path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
+# --- DEBUGGING START ---
+import streamlit as st
+st.write("Current Directory:", os.getcwd())
+st.write("Files in root:", os.listdir('.'))
+if os.path.exists('utils'):
+    st.write("Files in utils:", os.listdir('utils'))
+else:
+    st.write("WARNING: 'utils' folder NOT FOUND!")
+# --- DEBUGGING END ---
+
 import utils.data_loader as dl
 import utils.metrics as mt
 import utils.visualizations as vz
