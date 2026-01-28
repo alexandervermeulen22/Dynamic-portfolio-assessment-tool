@@ -66,10 +66,12 @@ def plot_correlation_heatmap(correlation_matrix):
     )
     return fig
 
-def plot_efficient_frontier_chart(results_array):
+def plot_efficient_frontier_chart(results_array, portfolio_vol=None, portfolio_return=None):
     """
-    Plots the efficient frontier simulation.
+    Plots the efficient frontier simulation and optionally highlights the current portfolio.
     results_array: [returns, volatilities, sharpe_ratios]
+    portfolio_vol: float, optional - Current portfolio volatility
+    portfolio_return: float, optional - Current portfolio return
     """
     df = pd.DataFrame({
         'Return': results_array[0],
@@ -83,6 +85,22 @@ def plot_efficient_frontier_chart(results_array):
         title='Efficient Frontier Simulation',
         labels={'Sharpe': 'Sharpe Ratio'}
     )
+
+    # Add Current Portfolio Marker
+    if portfolio_vol is not None and portfolio_return is not None:
+        fig.add_trace(go.Scatter(
+            x=[portfolio_vol],
+            y=[portfolio_return],
+            mode='markers',
+            marker=dict(
+                color='red', 
+                size=18, 
+                symbol='star',
+                line=dict(width=2, color='white') # White border for contrast
+            ),
+            name='Current Portfolio'
+        ))
+
     return fig
 
 def plot_monte_carlo_simulation(simulation_df):
