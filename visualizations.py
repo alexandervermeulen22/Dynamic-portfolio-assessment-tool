@@ -66,23 +66,87 @@ def plot_correlation_heatmap(correlation_matrix):
     )
     return fig
 
-def plot_efficient_frontier_chart(results_array):
+import numpy as np
+
+def plot_efficient_frontier_chart(results_array, current_portfolio=None):
     """
     Plots the efficient frontier simulation.
     results_array: [returns, volatilities, sharpe_ratios]
+    current_portfolio: tuple (volatility, return) for the current portfolio marker
     """
-    df = pd.DataFrame({
-        'Return': results_array[0],
-        'Volatility': results_array[1],
-        'Sharpe': results_array[2]
-    })
+    # Extract data for easier plotting
+    returns = results_array[0]
+    vols = results_array[1]
+    sharpes = results_array[2]
     
-    fig = px.scatter(
-        df, x='Volatility', y='Return', color='Sharpe',
-        color_continuous_scale='Viridis',
+    # Identify Max Sharpe Ratio Portfolio
+    max_sharpe_idx = np.argmax(sharpes)
+    max_sharpe_ret = returns[max_sharpe_idx]
+    max_sharpe_vol = vols[max_sharpe_idx]
+    
+    fig = go.Figure()
+    
+    # 1. Simulation Points (Background)
+    fig.add_trace(go.Scatter(
+        x=vols,
+        y=returns,
+        mode='markers',
+        marker=dict(
+            color=sharpes,
+            colorscale='Viridis',
+            showscale=True,
+            colorbar=dict(title="Sharpe Ratio"),
+            size=5
+        ),
+        name='Simulated Portfolios',
+        text=[f"Sharpe: {s:.2f}" for s in sharpes],
+        hoverinfo='text+x+y'
+    ))
+    
+    # 2. Max Sharpe Ratio Portfolio (Gold Star)
+    fig.add_trace(go.Scatter(
+        x=[max_sharpe_vol],
+        y=[max_sharpe_ret],
+        mode='markers',
+        marker=dict(
+            size=20, 
+            color='gold', 
+            symbol='star', 
+            line=dict(color='black', width=2)
+        ),
+        name='Max Sharpe Ratio'
+    ))
+    
+    # 3. Current Portfolio (Red Star) - Added LAST to be on TOP
+    if current_portfolio:
+        port_vol, port_return = current_portfolio
+        fig.add_trace(go.Scatter(
+            x=[port_vol],
+            y=[port_return],
+            mode='markers',
+            marker=dict(
+                size=22, 
+                color='#FF4B4B', 
+                symbol='star', 
+                line=dict(color='white', width=2)
+            ),
+            name='Current Portfolio'
+        ))
+        
+    fig.update_layout(
         title='Efficient Frontier Simulation',
-        labels={'Sharpe': 'Sharpe Ratio'}
+        xaxis_title='Volatility (Annualized)',
+        yaxis_title='Return (Annualized)',
+        template='plotly_white',
+        hovermode='closest',
+        legend=dict(
+            yanchor="top",
+            y=0.99,
+            xanchor="left",
+            x=0.01
+        )
     )
+        
     return fig
 
 def plot_monte_carlo_simulation(simulation_df):

@@ -82,7 +82,11 @@ with st.sidebar.expander("Customize Weights"):
 
 # Analyze Button Logic
 if st.sidebar.button("Analyze Portfolio"):
-    st.session_state['analyzed'] = True
+    # Security: Limit number of tickers to prevent resource exhaustion
+    if len(tickers) > 50:
+        st.error("Too many tickers selected. Please limit to 50 or fewer to ensure stability.")
+    else:
+        st.session_state['analyzed'] = True
 
 if st.session_state.get('analyzed', False):
     try:
@@ -176,9 +180,7 @@ if st.session_state.get('analyzed', False):
                 with col_chart2:
                     st.subheader("Efficient Frontier Simulation")
                     sim_res, _ = mt.simulate_efficient_frontier(returns.mean(), cov_matrix, risk_free_rate=rf_rate)
-                    fig_ef = vz.plot_efficient_frontier_chart(sim_res)
-                    # Add current portfolio marker
-                    fig_ef.add_trace(dict(x=[port_vol], y=[port_return], mode='markers', marker=dict(color='red', size=15, symbol='star'), name='Current'))
+                    fig_ef = vz.plot_efficient_frontier_chart(sim_res, current_portfolio=(port_vol, port_return))
                     st.plotly_chart(fig_ef, use_container_width=True)
 
                 # 5. ESG & Data
@@ -217,8 +219,10 @@ if st.session_state.get('analyzed', False):
                 # Export
                 st.download_button("Download Price Data", df_prices.to_csv(), "price_data.csv")
     except Exception as e:
-        st.error(f"An error occurred during analysis: {e}")
-        st.exception(e)
+        # Security: Do not expose raw exception details to user (info leakage)
+        st.error("An error occurred during analysis. Please check your inputs and try again.")
+        # Log the actual error for debugging (in a real app this would go to a log file)
+        print(f"Error: {e}")
 
 else:
     st.info("👈 Enter tickers in the sidebar and click 'Analyze Portfolio' to start.")

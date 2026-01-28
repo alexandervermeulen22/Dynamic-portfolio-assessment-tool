@@ -1,7 +1,9 @@
 import yfinance as yf
 import pandas as pd
 import numpy as np
+import streamlit as st
 
+@st.cache_data
 def fetch_historical_data(tickers, start_date, end_date=None):
     """
     Fetches historical adjusted close prices for the given tickers.
@@ -30,6 +32,7 @@ def fetch_historical_data(tickers, start_date, end_date=None):
         
     return df
 
+@st.cache_data
 def fetch_exchange_rates(start_date):
     """
     Fetches USD/ZAR exchange rate.
