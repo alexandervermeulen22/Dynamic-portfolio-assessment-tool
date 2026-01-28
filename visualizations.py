@@ -97,12 +97,24 @@ def plot_efficient_frontier_chart(results_array, portfolio_vol=None, portfolio_r
             mode='markers',
             marker=dict(
                 color='red', 
-                size=20, 
+                size=15, 
                 symbol='star',
-                line=dict(width=2, color='white') # White border for contrast
+                line=dict(width=2, color='black') # Black border for contrast
             ),
             name='Current Portfolio'
         ))
+
+    fig.update_layout(
+        yaxis=dict(
+            tickformat='.0%',
+            dtick=0.05,
+            title='Expected Annual Return'
+        ),
+        xaxis=dict(
+            tickformat='.0%',
+            title='Annual Volatility'
+        )
+    )
 
     return fig
 

@@ -52,7 +52,6 @@ st.markdown("""
 
 # Title using the gradient style
 st.title("Dynamic Portfolio Assessment Tool")
-st.markdown("### Finance Meets Tech: Automated Variance & Risk Reporting")
 
 # Sidebar
 st.sidebar.header("Portfolio Configuration")
@@ -188,6 +187,7 @@ if st.session_state.get('analyzed', False):
                 st.markdown("### ESG & Holdings Data")
                 esg_df = dl.get_esg_scores(tickers)
                 esg_df['Weight'] = [f"{w:.1%}" for w in weights]
+                esg_df.index = range(1, len(esg_df) + 1)
                 st.dataframe(esg_df, use_container_width=True)
                 
                 # 6. Monte Carlo Simulation (Predictive Model)
