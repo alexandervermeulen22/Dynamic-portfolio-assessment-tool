@@ -139,11 +139,15 @@ def plot_efficient_frontier_chart(results_array, current_portfolio=None):
         yaxis_title='Return (Annualized)',
         template='plotly_white',
         hovermode='closest',
+        yaxis=dict(
+            tickformat='.0%',
+            dtick=0.10
+        ),
         legend=dict(
-            yanchor="top",
-            y=0.99,
+            yanchor="middle",
+            y=0.5,
             xanchor="left",
-            x=0.01
+            x=1.02
         )
     )
         
