@@ -180,7 +180,9 @@ if st.session_state.get('analyzed', False):
                 with col_chart2:
                     st.subheader("Efficient Frontier Simulation")
                     sim_res, _ = mt.simulate_efficient_frontier(returns.mean(), cov_matrix, risk_free_rate=rf_rate)
-                    fig_ef = vz.plot_efficient_frontier_chart(sim_res, current_portfolio=(port_vol, port_return))
+                    fig_ef = vz.plot_efficient_frontier_chart(sim_res)
+                    # Add current portfolio marker
+                    fig_ef.add_trace(dict(x=[port_vol], y=[port_return], mode='markers', marker=dict(color='red', size=15, symbol='star'), name='Current'))
                     st.plotly_chart(fig_ef, use_container_width=True)
 
                 # 5. ESG & Data
