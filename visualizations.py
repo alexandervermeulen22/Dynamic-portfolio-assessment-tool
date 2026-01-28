@@ -147,8 +147,9 @@ def plot_efficient_frontier_chart(results_array, current_portfolio=None):
             yanchor="middle",
             y=0.5,
             xanchor="left",
-            x=1.02
-        )
+            x=1.15
+        ),
+        margin=dict(r=150) # Add right margin to fit legend
     )
         
     return fig
