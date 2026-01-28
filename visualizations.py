@@ -73,33 +73,50 @@ def plot_efficient_frontier_chart(results_array, portfolio_vol=None, portfolio_r
     portfolio_vol: float, optional - Current portfolio volatility
     portfolio_return: float, optional - Current portfolio return
     """
-    df = pd.DataFrame({
-        'Return': results_array[0],
-        'Volatility': results_array[1],
-        'Sharpe': results_array[2]
-    })
     
-    fig = px.scatter(
-        df, x='Volatility', y='Return', color='Sharpe',
-        color_continuous_scale='Viridis',
-        title='Efficient Frontier Simulation',
-        labels={'Sharpe': 'Sharpe Ratio'}
+    # Efficient Frontier Cloud (WebGL for performance handling many points)
+    trace_cloud = go.Scattergl(
+        x=results_array[1],
+        y=results_array[0],
+        mode='markers',
+        marker=dict(
+            color=results_array[2],
+            colorscale='Viridis',
+            size=6,
+            line=dict(width=0),
+            opacity=0.7,
+            colorbar=dict(title='Sharpe Ratio')
+        ),
+        name='Simulated Portfolios',
+        text=[f"Sharpe: {s:.2f}" for s in results_array[2]],
+        hoverinfo='text+x+y'
     )
-
-    # Add Current Portfolio Marker
+    
+    fig = go.Figure(data=[trace_cloud])
+    
+    # Current Portfolio Marker (SVG to ensure it sits ON TOP of WebGL canvas)
     if portfolio_vol is not None and portfolio_return is not None:
-        fig.add_trace(go.Scatter(
+        trace_current = go.Scatter(
             x=[portfolio_vol],
             y=[portfolio_return],
             mode='markers',
             marker=dict(
                 color='red', 
-                size=18, 
+                size=25, 
                 symbol='star',
-                line=dict(width=2, color='white') # White border for contrast
+                line=dict(width=3, color='black') # High contrast border
             ),
             name='Current Portfolio'
-        ))
+        )
+        fig.add_trace(trace_current)
+
+    fig.update_layout(
+        title='Efficient Frontier Simulation',
+        xaxis_title='Volatility (Annualized)',
+        yaxis_title='Expected Annual Return',
+        template='plotly_white',
+        hovermode='closest'
+    )
 
     return fig
 
